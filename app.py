@@ -104,7 +104,8 @@ def processBusiness(token, business):
         j['avatar'] = new_avatar
     else:
         print(f'Not exists: {IMAGE_PATH}/{new_avatar}')
-        del j['avatar']
+        if j.get('avatar') is not None:
+            del j['avatar']
 
     saveBusiness(token, id, j)
 
@@ -115,11 +116,13 @@ def processBusinessBranch(token, business, branch, force=False):
     old_business_avatar = business.get("j", {}).get('avatar', '') or ''
     old_avatar = branch.get("j", {}).get('avatar', '') or ''
 
-    print('branch', branch.get("id"))
+    print('      branch', branch.get("id"))
 
-    print('old_avatar', old_avatar)
-    print('old_business_avatar', old_business_avatar)
-    print('business_avatar', business_avatar)
+    print('        old_avatar', old_avatar)
+    print('        old_business_avatar', old_business_avatar)
+    print('        business_avatar', business_avatar)
+
+    j = branch['j']
 
     if (old_avatar == '' or old_avatar == old_business_avatar or old_avatar == business_avatar):
         if os.path.isfile(f'{IMAGE_PATH}/{business_avatar}') \
@@ -128,17 +131,17 @@ def processBusinessBranch(token, business, branch, force=False):
             os.system(
                 f'ln -s {IMAGE_PATH}/{business_avatar} {IMAGE_PATH}/{branch_avatar}'
             )
+        if j.get('avatar') is not None:
+            del j['avatar']
     else:
-        if os.path.isfile(f'{IMAGE_PATH}/{old_avatar}'):
+        if os.path.isfile(f'{IMAGE_PATH}/{old_avatar}') and old_avatar != branch_avatar:
             print(f'   FILE rename: {old_avatar} to {branch_avatar}')
             os.replace(
                 f'{IMAGE_PATH}/{old_avatar}', f'{IMAGE_PATH}/{branch_avatar}'
             )
-            
-    if old_avatar != '':
-        j = branch['j']
         j['avatar'] = branch_avatar
-        saveBusiness(token, branch.get("id"), j)
+    
+    saveBusiness(token, branch.get("id"), j)
 
 
 def doBusinessBranches(token, business, force=False):
