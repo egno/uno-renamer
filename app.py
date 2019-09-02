@@ -9,8 +9,8 @@ APP_API_URL = os.getenv('APP_API_URL')
 APP_USER = os.getenv('APP_USER')
 APP_PASSWD = os.getenv('APP_PASSWD')
 IMAGE_PATH = os.getenv('IMAGE_PATH','/opt/data/images')
-PART_SIZE = os.getenv('PART_SIZE', 4)
-CONN_TIMEOUT = os.getenv('CONN_TIMEOUT', 5)
+PART_SIZE = int(os.getenv('PART_SIZE', 4))
+CONN_TIMEOUT = int(os.getenv('CONN_TIMEOUT', 5))
 
 
 def login():
