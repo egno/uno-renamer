@@ -85,7 +85,7 @@ def processBusiness(token, business):
         return
 
     new_avatar = f'{id}.png'
-    avatar = business.get('j', {}).get('avatar', '')
+    avatar = business.get('j', {}).get('avatar', '') or ''
     j = business['j']
 
     if avatar == '' and os.path.isfile(f'{IMAGE_PATH}/{new_avatar}'):
@@ -112,8 +112,14 @@ def processBusiness(token, business):
 def processBusinessBranch(token, business, branch, force=False):
     business_avatar = f'{business.get("id")}.png'
     branch_avatar = f'{branch.get("id")}.png'
-    old_business_avatar = business.get("j", {}).get('avatar', '')
-    old_avatar = branch.get("j", {}).get('avatar', '')
+    old_business_avatar = business.get("j", {}).get('avatar', '') or ''
+    old_avatar = branch.get("j", {}).get('avatar', '') or ''
+
+    print('branch', branch.get("id"))
+
+    print('old_avatar', old_avatar)
+    print('old_business_avatar', old_business_avatar)
+    print('business_avatar', business_avatar)
 
     if (old_avatar == '' or old_avatar == old_business_avatar or old_avatar == business_avatar):
         if os.path.isfile(f'{IMAGE_PATH}/{business_avatar}') \
@@ -128,10 +134,11 @@ def processBusinessBranch(token, business, branch, force=False):
             os.replace(
                 f'{IMAGE_PATH}/{old_avatar}', f'{IMAGE_PATH}/{branch_avatar}'
             )
-
-    j = branch['j']
-    j['avatar'] = branch_avatar
-    saveBusiness(token, branch.get("id"), j)
+            
+    if old_avatar != '':
+        j = branch['j']
+        j['avatar'] = branch_avatar
+        saveBusiness(token, branch.get("id"), j)
 
 
 def doBusinessBranches(token, business, force=False):
