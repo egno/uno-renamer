@@ -141,6 +141,9 @@ def processBusinessBranch(token, business, branch, force=False):
             )
         j['avatar'] = branch_avatar
     
+    if j.get('avatar') is not None and not os.path.isfile(f'{IMAGE_PATH}/{branch_avatar}'):
+        del j['avatar']
+
     saveBusiness(token, branch.get("id"), j)
 
 
